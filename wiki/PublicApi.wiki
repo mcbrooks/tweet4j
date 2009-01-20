@@ -1,0 +1,15 @@
+#summary Java Interface to the Twitter API
+
+= Introduction =
+
+Add your content here.
+
+
+= Details =
+Support for API methods that don't require user authentication:
+{{{
+...
+PublicApi api = new PublicApiClient();
+List<Status> publicTimeline = api.getPublicTimeline();
+User user = api.getUser(userId);
+}}}
