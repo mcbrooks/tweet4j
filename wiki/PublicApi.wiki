@@ -7,7 +7,7 @@ tweet4j offers a PublicApi interface to the [http://apiwiki.twitter.com/REST+API
 
 = Details =
 Support for API methods that don't require user authentication:
-Generally the user will use the `PublicAPI` interface, instantiating a PublicApiClient instance with a no-parameter-constructor.  The example below shows the methods that are available with this interface.
+Generally the user will use the `PublicAPI` interface, instantiating a `PublicApiClient` instance with a no-parameter-constructor.  The example below shows the methods that are available with this interface.
 
 {{{
 // instantiate a PublicApi instance
