@@ -18,4 +18,12 @@ List<Status> publicTimeline = api.getPublicTimeline();
 
 // retrieve a twitter user by userId or screenName
 User user = api.getUser(userId);
+
+// retrieve a twitter user by email address
+User user = api.getUserByEmail(email);
+
+// retrieve a twitter status by id
+Status status = api.getStatus(statusId);
 }}}
+
+If these methods don't fill your requirements, you'll probably need to look at the UserApi interface.
