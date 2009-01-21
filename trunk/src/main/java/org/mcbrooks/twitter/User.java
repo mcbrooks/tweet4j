@@ -3,76 +3,74 @@ package org.mcbrooks.twitter;
 import java.util.Date;
 import java.util.TimeZone;
 
-
 /**
  * @author mcb
- *
  */
-public class User 
+public class User
 {
   /** unique id */
   private Integer id;
-  
+
   /** twitter username */
   private String name;
-  
+
   /** twitter screen name */
   private String screenName;
-  
+
   /** location */
   private String location;
-  
+
   /** description */
   private String description;
-  
+
   /** profile image url */
   private String profileImageUrl;
-  
+
   /** user url */
   private String url;
-  
+
   /** user protection status */
   private boolean isProtected;
-  
+
   /** statuses count */
   private Integer statusesCount;
-  
+
   /** followers count */
   private Integer followersCount;
-  
+
   /** friends (following) count */
   private Integer friendsCount;
-  
+
   /** favorites count */
   private Integer favouritesCount;
 
   /** latest status */
   private Status status;
-  
+
   /** creation date */
   private Date createdAt;
-  
+
   /** utc offset */
   private int utcOffset;
-  
+
   /** time zone */
   private TimeZone timeZone;
-  
+
   /** profile bg color */
   private String profileBackgroundColor;
-  
+
   private String profileTextColor;
-  
+
   private String profileLinkColor;
-  
+
   private String profileSidebarFillColor;
-  
+
   private String profileSidebarBorderColor;
-  
+
   private String profileBackgroundImageUrl;
-  
+
   private String profileBackgroundTile;
-  
+
   public enum Device {
     IM, SMS, NONE
   }
@@ -80,322 +78,368 @@ public class User
   /**
    * @return the id
    */
-  public Integer getId() {
+  public Integer getId()
+  {
     return id;
   }
 
   /**
    * @param id the id to set
    */
-  public void setId(Integer id) {
+  public void setId(Integer id)
+  {
     this.id = id;
   }
 
   /**
    * @return the name
    */
-  public String getName() {
+  public String getName()
+  {
     return name;
   }
 
   /**
    * @param name the name to set
    */
-  public void setName(String name) {
+  public void setName(String name)
+  {
     this.name = name;
   }
 
   /**
    * @return the screenName
    */
-  public String getScreenName() {
+  public String getScreenName()
+  {
     return screenName;
   }
 
   /**
    * @param screenName the screenName to set
    */
-  public void setScreenName(String screenName) {
+  public void setScreenName(String screenName)
+  {
     this.screenName = screenName;
   }
 
   /**
    * @return the location
    */
-  public String getLocation() {
+  public String getLocation()
+  {
     return location;
   }
 
   /**
    * @param location the location to set
    */
-  public void setLocation(String location) {
+  public void setLocation(String location)
+  {
     this.location = location;
   }
 
   /**
    * @return the description
    */
-  public String getDescription() {
+  public String getDescription()
+  {
     return description;
   }
 
   /**
    * @param description the description to set
    */
-  public void setDescription(String description) {
+  public void setDescription(String description)
+  {
     this.description = description;
   }
 
   /**
    * @return the profileImageUrl
    */
-  public String getProfileImageUrl() {
+  public String getProfileImageUrl()
+  {
     return profileImageUrl;
   }
 
   /**
    * @param profileImageUrl the profileImageUrl to set
    */
-  public void setProfileImageUrl(String profileImageUrl) {
+  public void setProfileImageUrl(String profileImageUrl)
+  {
     this.profileImageUrl = profileImageUrl;
   }
 
   /**
    * @return the url
    */
-  public String getUrl() {
+  public String getUrl()
+  {
     return url;
   }
 
   /**
    * @param url the url to set
    */
-  public void setUrl(String url) {
+  public void setUrl(String url)
+  {
     this.url = url;
   }
 
   /**
    * @return the isProtected
    */
-  public boolean isProtected() {
+  public boolean isProtected()
+  {
     return isProtected;
   }
 
   /**
    * @param isProtected the isProtected to set
    */
-  public void setProtected(boolean isProtected) {
+  public void setProtected(boolean isProtected)
+  {
     this.isProtected = isProtected;
   }
 
   /**
    * @return the statusesCount
    */
-  public Integer getStatusesCount() {
+  public Integer getStatusesCount()
+  {
     return statusesCount;
   }
 
   /**
    * @param statusesCount the statusesCount to set
    */
-  public void setStatusesCount(Integer statusesCount) {
+  public void setStatusesCount(Integer statusesCount)
+  {
     this.statusesCount = statusesCount;
   }
 
   /**
    * @return the followersCount
    */
-  public Integer getFollowersCount() {
+  public Integer getFollowersCount()
+  {
     return followersCount;
   }
 
   /**
    * @param followersCount the followersCount to set
    */
-  public void setFollowersCount(Integer followersCount) {
+  public void setFollowersCount(Integer followersCount)
+  {
     this.followersCount = followersCount;
   }
 
   /**
    * @return the friendsCount
    */
-  public Integer getFriendsCount() {
+  public Integer getFriendsCount()
+  {
     return friendsCount;
   }
 
   /**
    * @param friendsCount the friendsCount to set
    */
-  public void setFriendsCount(Integer friendsCount) {
+  public void setFriendsCount(Integer friendsCount)
+  {
     this.friendsCount = friendsCount;
   }
 
   /**
    * @return the favouritesCount
    */
-  public Integer getFavouritesCount() {
+  public Integer getFavouritesCount()
+  {
     return favouritesCount;
   }
 
   /**
    * @param favouritesCount the favouritesCount to set
    */
-  public void setFavouritesCount(Integer favouritesCount) {
+  public void setFavouritesCount(Integer favouritesCount)
+  {
     this.favouritesCount = favouritesCount;
   }
 
   /**
    * @return the status
    */
-  public Status getStatus() {
+  public Status getStatus()
+  {
     return status;
   }
 
   /**
    * @param status the status to set
    */
-  public void setStatus(Status status) {
+  public void setStatus(Status status)
+  {
     this.status = status;
   }
 
   /**
    * @return the createdAt
    */
-  public Date getCreatedAt() {
+  public Date getCreatedAt()
+  {
     return createdAt;
   }
 
   /**
    * @param createdAt the createdAt to set
    */
-  public void setCreatedAt(Date createdAt) {
+  public void setCreatedAt(Date createdAt)
+  {
     this.createdAt = createdAt;
   }
 
   /**
    * @return the utcOffset
    */
-  public Integer getUtcOffset() {
+  public Integer getUtcOffset()
+  {
     return utcOffset;
   }
 
   /**
    * @param utcOffset the utcOffset to set
    */
-  public void setUtcOffset(Integer utcOffset) {
+  public void setUtcOffset(Integer utcOffset)
+  {
     this.utcOffset = utcOffset;
   }
 
   /**
    * @return the timeZone
    */
-  public TimeZone getTimeZone() {
+  public TimeZone getTimeZone()
+  {
     return timeZone;
   }
 
   /**
    * @param timeZone the timeZone to set
    */
-  public void setTimeZone(TimeZone timeZone) {
+  public void setTimeZone(TimeZone timeZone)
+  {
     this.timeZone = timeZone;
   }
 
   /**
    * @return the profileBackgroundColor
    */
-  public String getProfileBackgroundColor() {
+  public String getProfileBackgroundColor()
+  {
     return profileBackgroundColor;
   }
 
   /**
    * @param profileBackgroundColor the profileBackgroundColor to set
    */
-  public void setProfileBackgroundColor(String profileBackgroundColor) {
+  public void setProfileBackgroundColor(String profileBackgroundColor)
+  {
     this.profileBackgroundColor = profileBackgroundColor;
   }
 
   /**
    * @return the profileTextColor
    */
-  public String getProfileTextColor() {
+  public String getProfileTextColor()
+  {
     return profileTextColor;
   }
 
   /**
    * @param profileTextColor the profileTextColor to set
    */
-  public void setProfileTextColor(String profileTextColor) {
+  public void setProfileTextColor(String profileTextColor)
+  {
     this.profileTextColor = profileTextColor;
   }
 
   /**
    * @return the profileLinkColor
    */
-  public String getProfileLinkColor() {
+  public String getProfileLinkColor()
+  {
     return profileLinkColor;
   }
 
   /**
    * @param profileLinkColor the profileLinkColor to set
    */
-  public void setProfileLinkColor(String profileLinkColor) {
+  public void setProfileLinkColor(String profileLinkColor)
+  {
     this.profileLinkColor = profileLinkColor;
   }
 
   /**
    * @return the profileSidebarFillColor
    */
-  public String getProfileSidebarFillColor() {
+  public String getProfileSidebarFillColor()
+  {
     return profileSidebarFillColor;
   }
 
   /**
    * @param profileSidebarFillColor the profileSidebarFillColor to set
    */
-  public void setProfileSidebarFillColor(String profileSidebarFillColor) {
+  public void setProfileSidebarFillColor(String profileSidebarFillColor)
+  {
     this.profileSidebarFillColor = profileSidebarFillColor;
   }
 
   /**
    * @return the profileSidebarBorderColor
    */
-  public String getProfileSidebarBorderColor() {
+  public String getProfileSidebarBorderColor()
+  {
     return profileSidebarBorderColor;
   }
 
   /**
    * @param profileSidebarBorderColor the profileSidebarBorderColor to set
    */
-  public void setProfileSidebarBorderColor(String profileSidebarBorderColor) {
+  public void setProfileSidebarBorderColor(String profileSidebarBorderColor)
+  {
     this.profileSidebarBorderColor = profileSidebarBorderColor;
   }
 
   /**
    * @return the profileBackgroundImageUrl
    */
-  public String getProfileBackgroundImageUrl() {
+  public String getProfileBackgroundImageUrl()
+  {
     return profileBackgroundImageUrl;
   }
 
   /**
    * @param profileBackgroundImageUrl the profileBackgroundImageUrl to set
    */
-  public void setProfileBackgroundImageUrl(String profileBackgroundImageUrl) {
+  public void setProfileBackgroundImageUrl(String profileBackgroundImageUrl)
+  {
     this.profileBackgroundImageUrl = profileBackgroundImageUrl;
   }
 
   /**
    * @return the profileBackgroundTile
    */
-  public String getProfileBackgroundTile() {
+  public String getProfileBackgroundTile()
+  {
     return profileBackgroundTile;
   }
 
   /**
    * @param profileBackgroundTile the profileBackgroundTile to set
    */
-  public void setProfileBackgroundTile(String profileBackgroundTile) {
+  public void setProfileBackgroundTile(String profileBackgroundTile)
+  {
     this.profileBackgroundTile = profileBackgroundTile;
   }
 

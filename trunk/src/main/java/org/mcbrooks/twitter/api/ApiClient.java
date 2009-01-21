@@ -3,6 +3,7 @@
  */
 package org.mcbrooks.twitter.api;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,20 +18,19 @@ import org.mcbrooks.twitter.User;
 
 /**
  * @author mcb
- *
  */
-public abstract class ApiClient 
+public abstract class ApiClient
 {
   /** log4j logger */
-  private static final Logger logger = Logger.getLogger(ApiClient.class);
+  protected static final Logger logger = Logger.getLogger(ApiClient.class);
 
   /** http client instance */
-  protected static final HttpClient client = HttpClientFactory.getClient();
-  
+  protected HttpClient client = HttpClientFactory.getClient();
+
   /** base url - defaults to "http://twitter.com/" */
   protected String baseUrl = "http://twitter.com/";
 
-  public ApiClient() 
+  public ApiClient()
   {
     logger.info("Instantiating ApiClient with baseUrl: " + baseUrl);
   }
@@ -52,7 +52,7 @@ public abstract class ApiClient
       }
       else
       {
-        throw new Exception("Twitter HTTP request not OK: " + statusCode);
+        throw new TwitterException("Twitter HTTP request not OK: " + statusCode);
       }
     }
     catch (Exception e)
@@ -63,14 +63,14 @@ public abstract class ApiClient
     {
       method.releaseConnection();
     }
-    
+
     // log xml document
     HttpUtility.dumpXML(logger, "twitter call", doc);
-    
+
     // return dom4j document
     return doc;
   }
-  
+
   @SuppressWarnings("unchecked")
   protected List<Status> parseStatuses(Document doc)
   {
@@ -90,12 +90,12 @@ public abstract class ApiClient
     }
     return statuses;
   }
-  
+
   protected Status parseStatus(Document doc)
   {
     Status status = null;
-    Element el = (Element)doc.selectSingleNode("//status");
-    if (el != null) 
+    Element el = (Element) doc.selectSingleNode("//status");
+    if (el != null)
     {
       status = parseStatus(el);
     }
@@ -106,37 +106,51 @@ public abstract class ApiClient
   {
     Status status = new Status();
     // id
-    Element elem = (Element)el.selectSingleNode("id");
+    Element elem = (Element) el.selectSingleNode("id");
     status.setId(XmlParser.parseIntElementData(elem));
     // text
-    elem = (Element)el.selectSingleNode("text");
+    elem = (Element) el.selectSingleNode("text");
     status.setText(XmlParser.parseStringElementData(elem));
     // source
-    elem = (Element)el.selectSingleNode("source");
+    elem = (Element) el.selectSingleNode("source");
     status.setSource(XmlParser.parseStringElementData(elem));
     // user
-    elem = (Element)el.selectSingleNode("user");
+    elem = (Element) el.selectSingleNode("user");
     if (elem != null)
     {
       status.setUser(parseUser(elem));
     }
     // reply to screen name
-    elem = (Element)el.selectSingleNode("in_reply_to_screen_name");
+    elem = (Element) el.selectSingleNode("in_reply_to_screen_name");
     status.setInReplyToScreenName(XmlParser.parseStringElementData(elem));
     // reply to status id
-    elem = (Element)el.selectSingleNode("in_reply_to_status_id");
+    elem = (Element) el.selectSingleNode("in_reply_to_status_id");
     status.setInReplyToStatusId(XmlParser.parseIntElementData(elem));
     // reply to user id
-    elem = (Element)el.selectSingleNode("in_reply_to_user_id");
+    elem = (Element) el.selectSingleNode("in_reply_to_user_id");
     status.setInReplyToUserId(XmlParser.parseIntElementData(elem));
     // is favorited
-    elem = (Element)el.selectSingleNode("favorited");
+    elem = (Element) el.selectSingleNode("favorited");
     status.setFavorited(XmlParser.parseBooleanElement(elem));
     // is truncated
-    elem = (Element)el.selectSingleNode("truncated");
+    elem = (Element) el.selectSingleNode("truncated");
     status.setTruncated(XmlParser.parseBooleanElement(elem));
-    // TODO: implement date xml parsing
     // creation date
+    elem = (Element) el.selectSingleNode("created_at");
+    SimpleDateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy");
+    try
+    {
+      status.setCreatedAt(df.parse(XmlParser.parseStringElementData(elem)));
+    }
+    catch (Exception e)
+    {
+      logger.warn("Status date parsing error: " + e);
+    }
+    if (logger.isDebugEnabled())
+    {
+      logger.debug("Parsed status: " + status);
+    }
+    // return status
     return status;
   }
 
@@ -144,7 +158,7 @@ public abstract class ApiClient
   protected List<User> parseUsers(Document doc)
   {
     List<User> users = new ArrayList<User>();
-    List<Element> els = doc.selectNodes("//users");
+    List<Element> els = doc.selectNodes("//user");
     for (Element el : els)
     {
       User user = parseUser(el);
@@ -155,12 +169,12 @@ public abstract class ApiClient
     }
     return users;
   }
-  
+
   protected User parseUser(Document doc)
   {
     User user = null;
     // get user element
-    Element el = (Element)doc.selectSingleNode("//user");
+    Element el = (Element) doc.selectSingleNode("//user");
     if (el != null)
     {
       user = parseUser(el);
@@ -168,48 +182,63 @@ public abstract class ApiClient
     // return user
     return user;
   }
-  
+
   protected User parseUser(Element el)
   {
     User user = new User();
     // id
-    Element elem = (Element)el.selectSingleNode("id");
+    Element elem = (Element) el.selectSingleNode("id");
     user.setId(XmlParser.parseIntElementData(elem));
     // name
-    elem = (Element)el.selectSingleNode("name");
+    elem = (Element) el.selectSingleNode("name");
     user.setName(XmlParser.parseStringElementData(elem));
     // screen name
-    elem = (Element)el.selectSingleNode("screen_name");
+    elem = (Element) el.selectSingleNode("screen_name");
     user.setScreenName(XmlParser.parseStringElementData(elem));
     // description
-    elem = (Element)el.selectSingleNode("description");
+    elem = (Element) el.selectSingleNode("description");
     user.setDescription(XmlParser.parseStringElementData(elem));
     // status
-    elem = (Element)el.selectSingleNode("status");
+    elem = (Element) el.selectSingleNode("status");
     if (elem != null)
     {
       user.setStatus(parseStatus(elem));
     }
     // user url
-    elem = (Element)el.selectSingleNode("url");
+    elem = (Element) el.selectSingleNode("url");
     user.setUrl(XmlParser.parseStringElementData(elem));
     // friendsCount
-    elem = (Element)el.selectSingleNode("friends_count");
+    elem = (Element) el.selectSingleNode("friends_count");
     user.setFriendsCount(XmlParser.parseIntElementData(elem));
     // followersCount
-    elem = (Element)el.selectSingleNode("followers_count");
+    elem = (Element) el.selectSingleNode("followers_count");
     user.setFollowersCount(XmlParser.parseIntElementData(elem));
     // favouritesCount
-    elem = (Element)el.selectSingleNode("favourites_count");
+    elem = (Element) el.selectSingleNode("favourites_count");
     user.setFavouritesCount(XmlParser.parseIntElementData(elem));
     // url
     // protected
-    elem = (Element)el.selectSingleNode("protected");
+    elem = (Element) el.selectSingleNode("protected");
     user.setProtected(XmlParser.parseBooleanElement(elem));
     // profile image url
-    elem = (Element)el.selectSingleNode("profile_image_url");
+    elem = (Element) el.selectSingleNode("profile_image_url");
     user.setProfileImageUrl(XmlParser.parseStringElementData(elem));
     // TODO: profile information
+    // created at
+    elem = (Element) el.selectSingleNode("created_at");
+    SimpleDateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy");
+    try
+    {
+      user.setCreatedAt(df.parse(XmlParser.parseStringElementData(elem)));
+    }
+    catch (Exception e)
+    {
+      logger.warn("User date parsing error: " + e);
+    }
+    if (logger.isDebugEnabled()) 
+    {
+      logger.debug("Parsed user: " + user);
+    }
     return user;
   }
 
