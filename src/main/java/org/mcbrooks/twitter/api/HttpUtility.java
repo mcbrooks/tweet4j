@@ -20,13 +20,12 @@ import org.dom4j.io.XMLWriter;
 
 /**
  * @author mcb
- *
  */
-public abstract class HttpUtility 
+public abstract class HttpUtility
 {
   /**
-   * Reads an HttpMethod response into a string, throwing an exception if the method is null or
-   * hasn't been executed yet.
+   * Reads an HttpMethod response into a string, throwing an exception if the
+   * method is null or hasn't been executed yet.
    * 
    * @param method
    * @return
@@ -48,11 +47,11 @@ public abstract class HttpUtility
     in.close();
     return response.toString();
   }
-  
+
   /**
-   * Parses an HttpMethod response's cookie header into a string that can be 
-   * set on returned strings, will throw an exception if the method is null
-   * or has not been executed yet.
+   * Parses an HttpMethod response's cookie header into a string that can be set
+   * on returned strings, will throw an exception if the method is null or has
+   * not been executed yet.
    * 
    * @param method
    * @return
@@ -65,8 +64,9 @@ public abstract class HttpUtility
     String cookies = "";
     Header cookieHeader = method.getResponseHeader("Set-Cookie");
     String cookieStr = cookieHeader.getValue();
-    if (cookieHeader != null) {
-      // pull the cookies out of the header, match against a /{prop=value}/ 
+    if (cookieHeader != null)
+    {
+      // pull the cookies out of the header, match against a /{prop=value}/
       // pattern, and filter out expires, path and domain props
       String regex = "(\\S+)=(\\S+)";
       String exclude = "expires|path|domain";
@@ -74,11 +74,11 @@ public abstract class HttpUtility
       Pattern excludePattern = Pattern.compile(exclude);
       Matcher matcher = pattern.matcher(cookieStr);
       Matcher excludeMatcher;
-      while (matcher.find()) 
+      while (matcher.find())
       {
         String match = matcher.group();
         excludeMatcher = excludePattern.matcher(match);
-        if (!excludeMatcher.find()) 
+        if (!excludeMatcher.find())
         {
           cookies += match + " ";
         }
@@ -92,7 +92,7 @@ public abstract class HttpUtility
    * 
    * @param method
    * @return
-   * @throws Exception 
+   * @throws Exception
    */
   protected static Document parseMethod(HttpMethod method) throws Exception
   {
@@ -117,26 +117,26 @@ public abstract class HttpUtility
   }
 
   /**
-   * Parses a relocation string from a method, returning an empty string if not 
-   * present, and throwing an exception for a null method or if the method hasn't
-   * been executed yet.
+   * Parses a relocation string from a method, returning an empty string if not
+   * present, and throwing an exception for a null method or if the method
+   * hasn't been executed yet.
    * 
    * @param method
    * @return
-   * @throws Exception 
+   * @throws Exception
    */
   protected static String parseRelocationLocation(HttpMethod method) throws Exception
   {
     validateMethod(method);
     String relocation = "";
     Header header = method.getResponseHeader("Location");
-    if (header != null) 
+    if (header != null)
     {
       relocation = header.getValue();
     }
     return relocation;
   }
-  
+
   /**
    * Dump the xml response to log4j
    * 
@@ -147,14 +147,15 @@ public abstract class HttpUtility
   protected static void dumpXML(Logger log, String tag, Document xml)
   {
     // Optimization, only dump if debug is enabled
-    if (log.isDebugEnabled()) 
+    if (log.isDebugEnabled())
     {
       // null check
       if (xml == null)
       {
         log.debug("[" + tag + "]\nEMPTY OR NULL DOCUMENT\n[XML_END]");
       }
-      else {
+      else
+      {
         try
         {
           StringWriter sw = new StringWriter();
@@ -162,9 +163,9 @@ public abstract class HttpUtility
           XMLWriter writer = new XMLWriter(sw, outformat);
           writer.write(xml);
           writer.flush();
-          log.debug("[" + tag + "]\n" + sw.toString() + "\n[XML_END]");    
+          log.debug("[" + tag + "]\n" + sw.toString() + "\n[XML_END]");
         }
-        catch(Exception e)
+        catch (Exception e)
         {
           log.warn("Unable to dump XML (e=" + e + ")");
         }
@@ -175,18 +176,18 @@ public abstract class HttpUtility
   //
   // private methods
   //
-  
+
   /**
-   * Validates an HttpMethod for parsing, throwing an Exception if the method 
-   * is null or hasn't been executed yet.
+   * Validates an HttpMethod for parsing, throwing an Exception if the method is
+   * null or hasn't been executed yet.
    * 
    * @param method
    * @throws Exception
    */
-  private static void validateMethod(HttpMethod method) throws Exception 
+  private static void validateMethod(HttpMethod method) throws Exception
   {
     // null check method and test to see if request has been sent
-    if (method == null || !method.hasBeenUsed()) 
+    if (method == null || !method.hasBeenUsed())
     {
       throw new Exception("HttpMethod is null or has not been executed yet.");
     }
