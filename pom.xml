@@ -1,9 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.mcbrooks</groupId>
   <artifactId>tweet4j</artifactId>
   <name>Java Twitter API Library</name>
-  <version>0.1</version>
+  <version>0.2</version>
   <description>A Java Library for interacting with the Twitter REST and Search API's</description>
   <url>http://code.google.com/p/tweet4j/</url>
   <licenses>
@@ -14,7 +16,7 @@
     </license>
   </licenses>
   <scm>
-  	<url>http://tweet4j.googlecode.com/svn/trunk/</url>
+    <url>http://tweet4j.googlecode.com/svn/trunk/</url>
   </scm>
   <build>
     <plugins>
@@ -28,17 +30,25 @@
         </configuration>
       </plugin>
       <plugin>
-      	<groupId>org.apache.maven.plugins</groupId>
-      	<artifactId>maven-jar-plugin</artifactId>
-      	<version>2.2</version>
-      	<configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.2</version>
+        <configuration>
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
               <mainClass>org.mcbrooks.twitter.api.Twitter</mainClass>
             </manifest>
           </archive>
-      	</configuration>
+        </configuration>
+      </plugin>
+      <plugin>
+      	<groupId>org.apache.maven.plugins</groupId>
+      	<artifactId>maven-surefire-plugin</artifactId>
+      	<version>2.4.3</version>
+        <configuration>
+          <skipTests>true</skipTests>
+        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -56,17 +66,23 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-    	<groupId>log4j</groupId>
-    	<artifactId>log4j</artifactId>
-    	<version>1.2.14</version>
-    	<type>jar</type>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.14</version>
+      <type>jar</type>
     </dependency>
     <dependency>
-    	<groupId>jaxen</groupId>
-    	<artifactId>jaxen</artifactId>
-    	<version>1.1.1</version>
-    	<type>jar</type>
-    	<scope>compile</scope>
+      <groupId>jaxen</groupId>
+      <artifactId>jaxen</artifactId>
+      <version>1.1.1</version>
+      <type>jar</type>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+    	<groupId>junit</groupId>
+    	<artifactId>junit</artifactId>
+    	<version>4.5</version>
+    	<scope>test</scope>
     </dependency>
   </dependencies>
 </project>
