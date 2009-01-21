@@ -14,7 +14,7 @@
     </license>
   </licenses>
   <scm>
-  	<url>https://svn.mcbrooks.org/trunk/tweet4j/</url>
+  	<url>http://tweet4j.googlecode.com/svn/trunk/</url>
   </scm>
   <build>
     <plugins>
