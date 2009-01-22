@@ -7,7 +7,7 @@ tweet4j offers a UserApi interface to the methods of the [ Twitter API] that req
 = Details =
 
 The UserApi interface extends the UserApi interface, offering all of those available methods and also the methods that require user authentication.
-(coming soon)
+(more documentation coming soon)
 
 {{{
 // instantiate new UserApi
