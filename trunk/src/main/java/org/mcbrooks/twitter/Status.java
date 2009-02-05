@@ -85,7 +85,6 @@ public class Status
    */
   public void setInReplyToStatusId(Integer inReplyToStatusId)
   {
-    System.out.println("saving reply to status id");
     this.inReplyToStatusId = inReplyToStatusId;
   }
 
