@@ -1,5 +1,6 @@
 package org.mcbrooks.twitter.api;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,25 +10,26 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.multipart.FilePart;
+import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
+import org.apache.commons.httpclient.methods.multipart.Part;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.mcbrooks.twitter.DirectMessage;
 import org.mcbrooks.twitter.Status;
 import org.mcbrooks.twitter.User;
 import org.mcbrooks.twitter.User.Device;
+import org.mcbrooks.twitter.api.params.ApiParams;
+import org.mcbrooks.twitter.api.params.ProfileColorParams;
+import org.mcbrooks.twitter.api.params.ProfileParams;
 
-public class UserApiClient extends PublicApiClient implements PublicApi, UserApi
+public class UserApiClient extends PublicApiClient implements UserApi
 {
   // Logger logger = Logger.getLogger(UserApiClient.class);
   /** user name */
   // private String username;
   /** user password */
   // private String password;
-  /** make constructor private */
-  private UserApiClient()
-  {
-  }
-
   /**
    * constructor
    */
@@ -48,6 +50,10 @@ public class UserApiClient extends PublicApiClient implements PublicApi, UserApi
     configureClient(username, password);
   }
 
+  //
+  // API methods
+  //
+
   public User blockUser(Integer id) throws TwitterException
   {
     return blockUser(id.toString());
@@ -55,27 +61,13 @@ public class UserApiClient extends PublicApiClient implements PublicApi, UserApi
 
   public User blockUser(String screenName) throws TwitterException
   {
-    // post method
-    PostMethod method = new PostMethod(baseUrl + "blocks/create/" + screenName + ".xml");
-
-    // execute method
-    Document doc = executeMethod(method);
-
-    // return parsed user
-    return parseUser(doc);
+    return userPost("blocks/create/" + screenName + ".xml", null);
   }
 
   @Override
   public Status createFavorite(Integer id) throws TwitterException
   {
-    // post method
-    PostMethod method = new PostMethod(baseUrl + "favorites/create/" + id + ".xml");
-
-    // execute method
-    Document doc = executeMethod(method);
-
-    // return parsed user
-    return parseStatus(doc);
+    return statusPost("favorites/create/" + id + ".xml", null);
   }
 
   @Override
@@ -87,31 +79,18 @@ public class UserApiClient extends PublicApiClient implements PublicApi, UserApi
   @Override
   public User createFriendship(String screenName, boolean follow) throws TwitterException
   {
-    // post method
-    PostMethod method = new PostMethod(baseUrl + "friendships/create/" + screenName + ".xml");
+    String url = "friendships/create/" + screenName + ".xml";
     if (follow)
     {
-      method.setQueryString("follow=true");
+      url += "?follow=true";
     }
-
-    // execute method
-    Document doc = executeMethod(method);
-
-    // return parsed user
-    return parseUser(doc);
+    return userPost(url, null);
   }
 
   @Override
   public Status destroyFavorite(Integer id) throws TwitterException
   {
-    // post method
-    PostMethod method = new PostMethod(baseUrl + "favorites/destroy/" + id + ".xml");
-
-    // execute method
-    Document doc = executeMethod(method);
-
-    // return parsed user
-    return parseStatus(doc);
+    return statusPost("favorites/destroy/" + id + ".xml", null);
   }
 
   @Override
@@ -123,19 +102,14 @@ public class UserApiClient extends PublicApiClient implements PublicApi, UserApi
   @Override
   public User destroyFriendship(String screenName) throws TwitterException
   {
-    // post method
-    PostMethod method = new PostMethod(baseUrl + "friendships/destroy/" + screenName + ".xml");
-
-    // execute method
-    Document doc = executeMethod(method);
-
-    // return parsed user
-    return parseUser(doc);
+    return userPost("friendships/destroy/" + screenName + ".xml", null);
   }
 
   @Override
   public DirectMessage destroyMessage(Integer id) throws TwitterException
   {
+    // // TODO implement message post
+    // / return messagePost("direct_messages/destroy/" + id + ".xml", null);
     // post method
     PostMethod method = new PostMethod(baseUrl + "direct_messages/destroy/" + id + ".xml");
 
@@ -149,14 +123,7 @@ public class UserApiClient extends PublicApiClient implements PublicApi, UserApi
   @Override
   public Status destroyStatus(Integer id) throws TwitterException
   {
-    // post method
-    PostMethod method = new PostMethod(baseUrl + "statuses/destroy/" + id + ".xml");
-
-    // execute method
-    Document doc = executeMethod(method);
-
-    // parse status
-    return parseStatus(doc);
+    return statusPost("statuses/destroy/" + id + ".xml", null);
   }
 
   @Override
@@ -166,7 +133,7 @@ public class UserApiClient extends PublicApiClient implements PublicApi, UserApi
     PostMethod method = new PostMethod(baseUrl + "account/end_session.xml");
 
     // execute method
-    Document doc = executeMethod(method);
+    executeMethod(method);
 
     // TODO parse success boolean
     return true;
@@ -181,14 +148,7 @@ public class UserApiClient extends PublicApiClient implements PublicApi, UserApi
   @Override
   public User followUser(String screenName) throws TwitterException
   {
-    // post method
-    PostMethod method = new PostMethod(baseUrl + "notifications/follow/" + screenName + ".xml");
-
-    // execute method
-    Document doc = executeMethod(method);
-
-    // return parsed user
-    return parseUser(doc);
+    return userPost("notifications/follow/" + screenName + ".xml", null);
   }
 
   @Override
@@ -207,14 +167,32 @@ public class UserApiClient extends PublicApiClient implements PublicApi, UserApi
   public boolean friendshipExists(String a, String b) throws TwitterException
   {
     // get method
-    GetMethod method = new GetMethod(baseUrl + "friendships/exists.xml?user_a=" + a + "&user_b="
-        + b);
+    GetMethod method =
+        new GetMethod(baseUrl + "friendships/exists.xml?user_a=" + a + "&user_b=" + b);
 
     // execute method
     Document doc = executeMethod(method);
-    Element friends = (Element) doc.selectSingleNode("friends");
+    Element friends = (Element)doc.selectSingleNode("friends");
 
     return XmlParser.parseBooleanElement(friends);
+  }
+
+  @Override
+  public List<Integer> getFollowerIds() throws TwitterException
+  {
+    return idsGet("followers/ids.xml");
+  }
+
+  @Override
+  public List<Integer> getFollowerIds(Integer id) throws TwitterException
+  {
+    return getFollowerIds(id.toString());
+  }
+
+  @Override
+  public List<Integer> getFollowerIds(String id) throws TwitterException
+  {
+    return idsGet("followers/ids/" + id + ".xml");
   }
 
   @Override
@@ -242,6 +220,7 @@ public class UserApiClient extends PublicApiClient implements PublicApi, UserApi
     // parse response
     return parseStatuses(doc);
   }
+  
 
   @Override
   public List<Status> getFavorites(ApiParams params) throws TwitterException
@@ -310,6 +289,24 @@ public class UserApiClient extends PublicApiClient implements PublicApi, UserApi
 
     // parse response
     return parseUsers(doc);
+  }
+
+  @Override
+  public List<Integer> getFriendIds() throws TwitterException
+  {
+    return idsGet("friends/ids.xml");
+  }
+
+  @Override
+  public List<Integer> getFriendIds(Integer id) throws TwitterException
+  {
+    return getFriendIds(id.toString());
+  }
+
+  @Override
+  public List<Integer> getFriendIds(String id) throws TwitterException
+  {
+    return idsGet("friends/ids/" + id + ".xml");
   }
 
   @Override
@@ -602,14 +599,7 @@ public class UserApiClient extends PublicApiClient implements PublicApi, UserApi
   @Override
   public User leaveUser(String screenName) throws TwitterException
   {
-    // post method
-    PostMethod method = new PostMethod(baseUrl + "notifications/leave/" + screenName + ".xml");
-
-    // execute method
-    Document doc = executeMethod(method);
-
-    // return parsed user
-    return parseUser(doc);
+    return userPost("notifications/leave/" + screenName + ".xml", null);
   }
 
   @Override
@@ -620,7 +610,7 @@ public class UserApiClient extends PublicApiClient implements PublicApi, UserApi
 
     // execute method
     Document doc = executeMethod(method);
-    Element el = (Element) doc.selectSingleNode("//remaining-hits");
+    Element el = (Element)doc.selectSingleNode("//remaining-hits");
 
     // parse rate number
     return XmlParser.parseIntElementData(el);
@@ -637,8 +627,9 @@ public class UserApiClient extends PublicApiClient implements PublicApi, UserApi
   {
     // post method
     PostMethod method = new PostMethod(baseUrl + "direct_messages/new.xml");
-    NameValuePair[] data = new NameValuePair[] { new NameValuePair("user", screenName),
-        new NameValuePair("text", text) };
+    NameValuePair[] data = new NameValuePair[] {
+        new NameValuePair("user", screenName), new NameValuePair("text", text)
+    };
     method.setRequestBody(data);
 
     // execute method
@@ -657,74 +648,71 @@ public class UserApiClient extends PublicApiClient implements PublicApi, UserApi
   @Override
   public User unblockUser(String screenName) throws TwitterException
   {
-    // post method
-    PostMethod method = new PostMethod(baseUrl + "blocks/destroy/" + screenName + ".xml");
-
-    // execute method
-    Document doc = executeMethod(method);
-
-    // return parsed user
-    return parseUser(doc);
+    return userPost("blocks/destroy/" + screenName + ".xml", null);
   }
 
   @Override
   public User updateDeliveryDevice(Device device) throws TwitterException
   {
-    // post method
-    PostMethod method = new PostMethod(baseUrl + "account/update_delivery_device.xml");
-    NameValuePair[] data = { new NameValuePair("device", device.toString().toLowerCase()), };
-    method.setRequestBody(data);
-
-    // execute method
-    Document doc = executeMethod(method);
-
-    // parse response
-    return parseUser(doc);
+    NameValuePair[] data = {
+      new NameValuePair("device", device.toString().toLowerCase()),
+    };
+    return userPost("account/update_delivery_device.xml", data);
   }
+
+  @Override
+  public User updateProfile(ProfileParams params) throws TwitterException
+  {
+    return userPost("account/update_profile.xml", params.toData());
+  }
+
+  @Override
+  public User updateProfileColors(ProfileColorParams params) throws TwitterException
+  {
+    String url = baseUrl + "";
+    NameValuePair[] data = params.toData();
+    return userPost(url, data);
+  }
+
+  // @Override
+  // public User updateProfileImage(File file) throws TwitterException
+  // {
+  // return userPostImage(file, "account/update_profile_image.xml");
+  // }
+  //
+  // @Override
+  // public User updateProfileBackgroundImage(File file) throws TwitterException
+  // {
+  // return userPostImage(file, "account/update_profile_background_image.xml");
+  // }
 
   @Override
   public Status updateStatus(String status) throws TwitterException
   {
-    // post method
-    PostMethod method = new PostMethod(baseUrl + "statuses/update.xml");
-    NameValuePair[] data = { new NameValuePair("status", status) };
-    method.setRequestBody(data);
-
-    // execute method
-    Document doc = executeMethod(method);
-
-    // parse response
-    return parseStatus(doc);
+    NameValuePair[] data = {
+      new NameValuePair("status", status)
+    };
+    return statusPost("statuses/update.xml", data);
   }
 
   @Override
   public Status updateStatus(String status, Integer responseId) throws TwitterException
   {
-    // post method
-    PostMethod method = new PostMethod(baseUrl + "statuses/update.xml");
-    NameValuePair[] data = { new NameValuePair("status", status),
-        new NameValuePair("in_reply_to_status_id", responseId.toString()) };
-    method.setRequestBody(data);
-
-    // execute method
-    Document doc = executeMethod(method);
-
-    // parse response
-    return parseStatus(doc);
+    NameValuePair[] data =
+        {
+            new NameValuePair("status", status),
+            new NameValuePair("in_reply_to_status_id", responseId.toString())
+        };
+    return statusPost("statuses/update.xml", data);
   }
 
   @Override
   public User verifyCredentials() throws TwitterException
   {
-    // get method
-    GetMethod method = new GetMethod(baseUrl + "account/verify_credentials.xml");
-
-    // execute method
-    Document doc = executeMethod(method);
-
-    // parse response
-    return parseUser(doc);
+    return userGet("account/verify_credentials.xml");
   }
+
+  //
 
   //
   // private implementations
@@ -749,7 +737,7 @@ public class UserApiClient extends PublicApiClient implements PublicApi, UserApi
   private DirectMessage parseDirectMessage(Document doc)
   {
     DirectMessage message = null;
-    Element el = (Element) doc.selectSingleNode("//direct_message");
+    Element el = (Element)doc.selectSingleNode("//direct_message");
     if (el != null)
     {
       message = parseDirectMessage(el);
@@ -761,19 +749,19 @@ public class UserApiClient extends PublicApiClient implements PublicApi, UserApi
   {
     DirectMessage message = new DirectMessage();
     // id
-    Element elem = (Element) el.selectSingleNode("id");
+    Element elem = (Element)el.selectSingleNode("id");
     message.setId(XmlParser.parseIntElementData(elem));
     // sender id
-    elem = (Element) el.selectSingleNode("sender_id");
+    elem = (Element)el.selectSingleNode("sender_id");
     message.setSenderId(XmlParser.parseIntElementData(elem));
     // text
-    elem = (Element) el.selectSingleNode("text");
+    elem = (Element)el.selectSingleNode("text");
     message.setText(XmlParser.parseStringElementData(elem));
     // recipient id
-    elem = (Element) el.selectSingleNode("recipient_id");
+    elem = (Element)el.selectSingleNode("recipient_id");
     message.setRecipientId(XmlParser.parseIntElementData(elem));
     // created at
-    elem = (Element) el.selectSingleNode("created_at");
+    elem = (Element)el.selectSingleNode("created_at");
     SimpleDateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy");
     try
     {
@@ -784,16 +772,16 @@ public class UserApiClient extends PublicApiClient implements PublicApi, UserApi
       logger.warn("Message creation date parsing error: " + e);
     }
     // sender screen name
-    elem = (Element) el.selectSingleNode("sender_screen_name");
+    elem = (Element)el.selectSingleNode("sender_screen_name");
     message.setSenderScreenName(XmlParser.parseStringElementData(elem));
     // recipient screen name
-    elem = (Element) el.selectSingleNode("recipient_screen_name");
+    elem = (Element)el.selectSingleNode("recipient_screen_name");
     message.setRecipientScreenName(XmlParser.parseStringElementData(elem));
     // sender
-    elem = (Element) el.selectSingleNode("sender");
+    elem = (Element)el.selectSingleNode("sender");
     message.setSender(parseUser(elem));
     // recipient
-    elem = (Element) el.selectSingleNode("recipient");
+    elem = (Element)el.selectSingleNode("recipient");
     message.setRecipient(parseUser(elem));
     if (logger.isDebugEnabled())
     {
@@ -810,5 +798,137 @@ public class UserApiClient extends PublicApiClient implements PublicApi, UserApi
     // set auth credentials
     client.getState().setCredentials(new AuthScope("twitter.com", 80),
         new UsernamePasswordCredentials(username, password));
+  }
+
+  private List<Integer> idsGet(String url) throws TwitterException
+  {
+    // get method
+    GetMethod method = new GetMethod(baseUrl + url);
+
+    // execute method
+    Document doc = executeMethod(method);
+
+    // return list of ids
+    return parseIds(doc);
+  }
+
+  private List<Integer> parseIds(Document doc)
+  {
+    // get list of ids
+    List<Element> els = doc.selectNodes("ids/id");
+    logger.debug("els: " + els);
+    
+    if (els == null) {
+      return null;
+    }
+    
+    List<Integer> ids = new ArrayList<Integer>();
+    for (Element el : els) {
+      Integer id = XmlParser.parseIntElementData(el);
+      if (id != null) {
+        ids.add(id);
+      }
+    }
+    logger.debug("ids: " + ids);
+    return ids;
+  }
+
+  private Status statusGet(String url) throws TwitterException
+  {
+    // get method
+    GetMethod method = new GetMethod(baseUrl + url);
+
+    // execute method
+    Document doc = executeMethod(method);
+
+    // return user
+    return parseStatus(doc);
+  }
+
+  private Status statusPost(String url, NameValuePair[] data) throws TwitterException
+  {
+    // post method
+    PostMethod method = new PostMethod(baseUrl + url);
+    if (data != null)
+    {
+      method.setRequestBody(data);
+    }
+
+    // execute method
+    Document doc = executeMethod(method);
+
+    // return status
+    return parseStatus(doc);
+  }
+
+  private User userGet(String url) throws TwitterException
+  {
+    // get method
+    GetMethod method = new GetMethod(baseUrl + url);
+
+    // execute method
+    Document doc = executeMethod(method);
+
+    // return user
+    return parseUser(doc);
+  }
+
+  private User userPost(String url, NameValuePair[] data) throws TwitterException
+  {
+    // post method
+    PostMethod method = new PostMethod(baseUrl + url);
+    if (data != null)
+    {
+      method.setRequestBody(data);
+    }
+
+    // execute method
+    Document doc = executeMethod(method);
+
+    // return user
+    return parseUser(doc);
+  }
+
+  /**
+   * Posts an image file, validating that the file is a file, correct filename,
+   * and is less than 700K
+   * 
+   * @param file
+   * @return User - an extend information user
+   * @throws TwitterException
+   */
+  private User userPostImage(File file, String url) throws TwitterException
+  {
+    // validate image file
+    String path = file.getPath();
+    boolean isValid =
+        file.isFile() && (path.contains(".gif") || path.contains(".png") || path.contains(".jpg"))
+            && file.length() < 700000l;
+    if (!isValid)
+    {
+      throw new TwitterException("Profile image is not valid.");
+    }
+
+    // create post method and request entity
+    PostMethod post = new PostMethod(baseUrl + url);
+    try
+    {
+      Part part = new FilePart(file.getName(), file);
+      Part[] parts = {
+        part
+      };
+      MultipartRequestEntity entity = new MultipartRequestEntity(parts, post.getParams());
+      post.setRequestEntity(entity);
+    }
+    catch (Exception e)
+    {
+      logger.error("error uploading file: " + e);
+      throw new TwitterException("Error uploading profile image.");
+    }
+    // execute method
+    Document doc = executeMethod(post);
+
+    // return parsed user
+    return parseUser(doc);
   }
 }

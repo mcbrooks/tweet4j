@@ -9,6 +9,9 @@ import org.mcbrooks.twitter.DirectMessage;
 import org.mcbrooks.twitter.Status;
 import org.mcbrooks.twitter.User;
 import org.mcbrooks.twitter.User.Device;
+import org.mcbrooks.twitter.api.params.ApiParams;
+import org.mcbrooks.twitter.api.params.ProfileColorParams;
+import org.mcbrooks.twitter.api.params.ProfileParams;
 
 /**
  * @author mcb
@@ -86,6 +89,22 @@ public interface UserApi extends PublicApi
   public boolean friendshipExists(String a, String b) throws TwitterException;
 
   //
+  // social graph methods
+  //
+  
+  public List<Integer> getFollowerIds() throws TwitterException;
+  
+  public List<Integer> getFollowerIds(Integer id) throws TwitterException;
+  
+  public List<Integer> getFollowerIds(String id) throws TwitterException;
+  
+  public List<Integer> getFriendIds() throws TwitterException;
+
+  public List<Integer> getFriendIds(Integer id) throws TwitterException;
+
+  public List<Integer> getFriendIds(String id) throws TwitterException;
+
+  //
   // account methods
   //
 
@@ -97,10 +116,13 @@ public interface UserApi extends PublicApi
 
   // TODO: figure out configuration for profile updating, and other profile
   // updating issues
-  // public boolean updateProfileColors() throws TwitterException;
-  // public boolean updateProfileImage() throws TwitterException;
-  // public boolean updateProfileBackgroundImage() throws TwitterException;
-  // public boolean updateProfile() throws TwitterException;
+  public User updateProfileColors(ProfileColorParams params) throws TwitterException;
+  
+//  public User updateProfileImage(File image) throws TwitterException;
+  
+//  public User updateProfileBackgroundImage(File image) throws TwitterException;
+  
+  public User updateProfile(ProfileParams params) throws TwitterException;
 
   public Integer rateLimitStatus() throws TwitterException;
 
@@ -109,7 +131,7 @@ public interface UserApi extends PublicApi
   //
 
   public List<Status> getFavorites() throws TwitterException;
-  
+
   public List<Status> getFavorites(ApiParams params) throws TwitterException;
 
   public Status createFavorite(Integer id) throws TwitterException;

@@ -1,11 +1,12 @@
 /**
  * 
  */
-package org.mcbrooks.twitter.api;
+package org.mcbrooks.twitter.api.params;
 
 /**
+ * Configuration bean containing parameters commonly used for API calls.
+ * 
  * @author mcb
- *
  */
 public class ApiParams
 {
